@@ -17,20 +17,21 @@
 
 ## 2. Mapa del repositorio
 
-| Archivo / carpeta            | Qué contiene                                                                | Cuándo leerlo |
-|------------------------------|-----------------------------------------------------------------------------|---------------|
-| `feature_list.json`          | Lista de tareas con estado (`pending` / `spec_ready` / `in_progress` / `done` / `blocked`) | Siempre, al empezar |
-| `progress/current.md`        | Estado de la sesión actual                                                  | Siempre, al empezar |
-| `progress/history.md`        | Bitácora append-only de sesiones anteriores                                 | Si necesitas contexto histórico |
-| `specs/<feature>/`           | `requirements.md` + `design.md` + `tasks.md` (Kiro-style)                   | Antes de implementar cualquier feature con `"sdd": true` |
-| `docs/architecture.md`       | Qué significa "hacer un buen trabajo" en este proyecto                      | Antes de implementar |
-| `docs/conventions.md`        | Reglas de estilo, nombres, estructura                                       | Antes de escribir código |
-| `docs/specs.md`              | Proceso SDD: EARS notation, los 3 archivos, puerta de aprobación humana     | Antes de redactar o leer un spec |
-| `docs/verification.md`       | Cómo verificar que tu trabajo funciona (incluye trazabilidad requirements)  | Antes de declarar una tarea como `done` |
-| `CHECKPOINTS.md`             | Criterios objetivos de "estado final correcto"                              | Para auto-evaluarte |
-| `.claude/agents/`            | Definiciones de subagentes (`leader`, `spec_author`, `implementer`, `reviewer`) | Si orquestas trabajo |
-| `src/`                       | Código de la aplicación                                                     | Para implementar |
-| `tests/`                     | Tests automáticos                                                           | Para verificar |
+| Archivo / carpeta      | Qué contiene                                                                               | Cuándo leerlo                                            |
+| ---------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------- |
+| `feature_list.json`    | Lista de tareas con estado (`pending` / `spec_ready` / `in_progress` / `done` / `blocked`) | Siempre, al empezar                                      |
+| `progress/current.md`  | Estado de la sesión actual                                                                 | Siempre, al empezar                                      |
+| `progress/history.md`  | Bitácora append-only de sesiones anteriores                                                | Si necesitas contexto histórico                          |
+| `specs/<feature>/`     | `requirements.md` + `design.md` + `tasks.md` (Kiro-style)                                  | Antes de implementar cualquier feature con `"sdd": true` |
+| `docs/architecture.md` | Qué significa "hacer un buen trabajo" en este proyecto                                     | Antes de implementar                                     |
+| `docs/conventions.md`  | Reglas de estilo, nombres, estructura                                                      | Antes de escribir código                                 |
+| `docs/setup.md`        | Protocolo para configurar el template desde cero (stack, placeholders, estructura inicial) | Al levantar un repo nuevo o detectar estado de plantilla |
+| `docs/specs.md`        | Proceso SDD: EARS notation, los 3 archivos, puerta de aprobación humana                    | Antes de redactar o leer un spec                         |
+| `docs/verification.md` | Cómo verificar que tu trabajo funciona (incluye trazabilidad requirements)                 | Antes de declarar una tarea como `done`                  |
+| `CHECKPOINTS.md`       | Criterios objetivos de "estado final correcto"                                             | Para auto-evaluarte                                      |
+| `.opencode/agents/`    | Definiciones de subagentes (`leader`, `spec_author`, `implementer`, `reviewer`)            | Si orquestas trabajo                                     |
+| `src/`                 | Código de la aplicación                                                                    | Para implementar                                         |
+| `tests/`               | Tests automáticos                                                                          | Para verificar                                           |
 
 ## 3. Reglas duras (no negociables)
 
@@ -45,7 +46,22 @@
 - **Deja el repositorio limpio** antes de cerrar la sesión (ver §5).
 - **Si no sabes algo, busca en `docs/`** antes de inventarlo.
 
-## 4. Flujo de trabajo (SDD)
+## 4. Setup inicial (solo una vez)
+
+Si el repositorio está en **estado de plantilla** (`feature_list.json`
+contiene `{{PROJECT_NAME}}` u otros placeholders), el leader **no**
+implementa features. En su lugar, ejecuta el protocolo de `docs/setup.md`:
+
+1. Recopila especificaciones técnicas del humano (stack, lenguaje, tipo).
+2. Rellena todos los placeholders `{{...}}` en `feature_list.json`,
+   `docs/`, `README.md`.
+3. Configura `.gitignore` y estructura mínima del stack.
+4. Verifica con `./init.sh`.
+5. Documenta en `progress/history.md`.
+
+Ver `docs/setup.md` para el protocolo completo.
+
+## 5. Flujo de trabajo (SDD)
 
 ```
 pending → [spec_author] → spec_ready → ⏸ HUMANO → in_progress → [implementer → reviewer] → done
@@ -63,7 +79,7 @@ pending → [spec_author] → spec_ready → ⏸ HUMANO → in_progress → [imp
 7. Si aprueba, el implementer marca `done` y mueve el resumen a
    `progress/history.md`.
 
-## 5. Cierre de sesión (lifecycle)
+## 6. Cierre de sesión (lifecycle)
 
 Antes de terminar:
 
@@ -73,7 +89,7 @@ Antes de terminar:
 4. Vacía `progress/current.md` dejando solo la plantilla.
 5. No dejes archivos temporales, ni `print()` de debug, ni TODOs sin contexto.
 
-## 6. Si te bloqueas
+## 7. Si te bloqueas
 
 - Relee la sección relevante de `docs/`.
 - Si la herramienta no hace lo que esperas, **no inventes un workaround**:

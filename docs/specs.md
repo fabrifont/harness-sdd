@@ -65,11 +65,11 @@ Ejemplo:
 
 ```markdown
 ## R1
-CUANDO el usuario ejecuta `python -m src.cli recent`, el sistema DEBE
-imprimir hasta 5 notas ordenadas por `created_at` descendente.
+CUANDO el usuario ejecuta `{{ENTRY_POINT}}`, el sistema DEBE
+procesar la entrada y generar la salida esperada.
 
 ## R2
-SI el flag `--limit` recibe un valor <= 0 ENTONCES el sistema DEBE
+SI el parámetro recibe un valor inválido ENTONCES el sistema DEBE
 imprimir un mensaje de error en stderr y salir con código != 0.
 ```
 
@@ -94,10 +94,10 @@ menos un `R<n>` que cubre.
 Ejemplo:
 
 ```markdown
-- [ ] T1 — Añadir `cmd_recent` en `src/cli.py`. Cubre: R1, R3.
-- [ ] T2 — Registrar subparser `recent` con flag `--limit`. Cubre: R1, R2.
-- [ ] T3 — Añadir `test_recent_default_limit` en `tests/test_cli.py`. Cubre: R1.
-- [ ] T4 — Añadir `test_recent_invalid_limit` en `tests/test_cli.py`. Cubre: R2.
+- [ ] T1 — Añadir `handler` en `src/api.py`. Cubre: R1, R3.
+- [ ] T2 — Registrar ruta/endpoint/comando. Cubre: R1, R2.
+- [ ] T3 — Añadir `test_feature_default` en `tests/test_api.py`. Cubre: R1.
+- [ ] T4 — Añadir `test_feature_invalid` en `tests/test_api.py`. Cubre: R2.
 ```
 
 El `implementer` marca `[x]` cada task al completarla. El `reviewer`
@@ -114,12 +114,12 @@ El `implementer` documenta el mapa en `progress/impl_<name>.md`:
 
 ```markdown
 ## Trazabilidad
-- R1 → `test_recent_default_limit`
-- R2 → `test_recent_invalid_limit`
-- R3 → `test_recent_custom_limit`
+- R1 → `test_feature_default`
+- R2 → `test_feature_invalid`
+- R3 → `test_feature_custom`
 ```
 
 ## Cuándo NO aplica SDD
 
-Las features con `"sdd": false` o sin el campo `sdd` (las legacy 1–6) NO
+Las features con `"sdd": false` o sin el campo `sdd` NO
 tienen spec. SDD solo se aplica hacia adelante.

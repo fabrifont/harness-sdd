@@ -5,43 +5,44 @@
 
 ## Principios
 
-1. **Capas claras.** El proyecto tiene tres capas y solo tres:
-   - `storage.py` — persistencia (JSON en disco).
-   - `notes.py` — modelo de dominio (`Note`).
-   - `cli.py` — interfaz de usuario (argparse).
+1. **Capas claras.** Define las capas de tu proyecto aquí. Ejemplo:
+   - `storage.py` — persistencia.
+   - `models.py` — modelo de dominio.
+   - `api.py` / `cli.py` — interfaz de usuario.
    No introducir capas adicionales (servicios, repositorios, ORMs) hasta que
    haya una razón concreta documentada en `feature_list.json`.
 
-2. **Sin dependencias externas.** Solo stdlib de Python. Si una feature
-   requiere una dependencia, primero se discute (estado `blocked`).
+2. **Dependencias controladas.** Lista las dependencias externas permitidas.
+   Si una feature requiere una dependencia nueva, primero se discute
+   (estado `blocked`).
 
-3. **Errores explícitos.** Las funciones que pueden fallar (id no existe,
-   archivo corrupto) lanzan excepciones nombradas, no devuelven `None`.
+3. **Errores explícitos.** Las funciones que pueden fallar lanzan
+   excepciones nombradas, no devuelven `None`.
 
-4. **Inmutabilidad por defecto.** `Note` es un `@dataclass(frozen=True)`.
-   Modificar = crear una nueva instancia.
+4. **Inmutabilidad por defecto.** Los datos de dominio preferentemente
+   inmutables. Modificar = crear una nueva instancia.
 
-5. **Atomicidad en disco.** Toda escritura a `notes.json` se hace primero
-   en un archivo temporal y luego `os.replace()`. Nunca dejar el archivo
-   a medio escribir.
+5. **Atomicidad en disco.** Toda escritura a archivos críticos se hace
+   primero en un archivo temporal y luego se renombra. Nunca dejar un
+   archivo a medio escribir.
 
 ## Flujo de datos
 
 ```
-usuario  ─→  cli.py (argparse)
-              │
-              ├─ construye Note con notes.Note.new(...)
-              │
-              └─→  storage.load() / storage.save()
-                       │
-                       └─→  .notes.json (en CWD)
+usuario  ─→  interfaz (api/cli)
+               │
+               ├─ construye/valida entidades del dominio
+               │
+               └─→  capa de persistencia
+                        │
+                        └─→  almacenamiento (disco/db)
 ```
 
 ## Qué NO hacer
 
 - No usar `print()` para errores. Usa `sys.stderr` y exit code != 0.
-- No mezclar IO con lógica de dominio dentro de `notes.py`.
-- No leer/escribir el archivo en cada operación dentro de un bucle.
+- No mezclar IO con lógica de dominio dentro de los modelos.
+- No leer/escribir el mismo recurso en cada operación dentro de un bucle.
   Carga al inicio, modifica en memoria, guarda al final.
-- No añadir un sistema de configuración. La ruta del archivo se pasa
-  explícitamente o usa la constante por defecto.
+- No añadir un sistema de configuración sin justificación. Las rutas y
+  parámetros se pasan explícitamente o usan constantes por defecto.

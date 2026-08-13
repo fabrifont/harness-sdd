@@ -1,22 +1,38 @@
-# ejemplo-harness — Notes CLI
+# harness-sdd — Template genérico para desarrollo con agentes de IA
 
-Proyecto de ejemplo que demuestra los principios de **Harness Engineering**
-aplicados a un CLI minimalista de notas en Python.
+Template de **Harness Engineering** para desarrollo de software con agentes
+de IA siguiendo **Spec Driven Development**.
 
-> El código de la aplicación es deliberadamente simple. Lo importante de
-> este repo no es **qué** hace, sino **cómo** está estructurado para que un
-> agente de IA pueda trabajar sobre él de forma autónoma y verificable.
+> Lo importante de este repo no es **qué** aplicación contiene, sino **cómo**
+> está estructurado para que un agente de IA pueda trabajar sobre él de forma
+> autónoma y verificable.
 
 ## Cómo está organizado el arnés
 
 | Pilar                                  | Manifestación en este repo                                                       |
 |----------------------------------------|----------------------------------------------------------------------------------|
 | **1. El repositorio ES el sistema**    | `AGENTS.md`, `init.sh`, `feature_list.json`, `specs/`, `progress/`, `docs/`      |
-| **2. Orquestación multi-agente**       | `.claude/agents/leader.md`, `spec_author.md`, `implementer.md`, `reviewer.md`    |
+| **2. Orquestación multi-agente**       | `.opencode/agents/leader.md`, `spec_author.md`, `implementer.md`, `reviewer.md` |
 | **3. Spec Driven Development**         | `docs/specs.md`, EARS notation, puerta de aprobación humana en `spec_ready`      |
-| **4. Supervisión y mejora**            | `CHECKPOINTS.md`, hooks en `.claude/settings.json`, `tests/`                     |
+| **4. Supervisión y mejora**            | `CHECKPOINTS.md`, `tests/`                                                       |
 
 ## Para empezar
+
+### 1. Si acabas de clonar el template (estado de plantilla)
+
+El repo contiene placeholders `{{...}}` que deben rellenarse para tu stack.
+
+Abre Opencode en la raíz y pide:
+> **«Configura este proyecto para un [API REST en Python 3.11]»**
+
+El `leader` ejecutará el protocolo de `docs/setup.md`:
+- Rellenará placeholders en `feature_list.json`, `docs/`, `README.md`.
+- Configurará `.gitignore` y estructura mínima del stack.
+- Verificará con `./init.sh`.
+
+**No implementes features hasta completar el setup.**
+
+### 2. Si el repo ya está configurado
 
 ```bash
 ./init.sh
@@ -24,25 +40,19 @@ aplicados a un CLI minimalista de notas en Python.
 
 Si todo está verde, abre `AGENTS.md` y sigue desde ahí.
 
-## Para usar la app (humanos)
+## Para usar con Opencode
 
-```bash
-python3 -m src.cli add "comprar pan" --body "y leche"
-python3 -m src.cli list
-```
-
-## Probarlo tú mismo con Claude Code
-
-Si te descargas el repo y abres Claude Code en la raíz, ya estás dentro del
-arnés: `CLAUDE.md` fuerza al modelo a actuar como `leader` (orquesta, no
-edita código) y `docs/specs.md` impone el flujo Spec Driven Development.
+Si te descargas el repo y abres Opencode en la raíz, ya estás dentro del
+arnés: `.opencode/AGENTS.md` fuerza al modelo a actuar como `leader`
+(orquesta, no edita código) y `docs/specs.md` impone el flujo Spec Driven
+Development.
 
 Receta rápida:
 
 1. `./init.sh` — debe terminar verde.
-2. Abre `feature_list.json` y deja al menos una feature con
-   `status: "pending"` y `"sdd": true`. La #7 `cli_recent` ya está así.
-3. Lanza Claude Code en la raíz del repo: `claude`.
+2. Edita `feature_list.json` y define tus features con
+   `status: "pending"` y `"sdd": true`.
+3. Abre Opencode en la raíz del repo.
 4. Pídele: **«implementa la siguiente feature pendiente»**.
 
 Lo que ocurre, en dos fases:
@@ -77,7 +87,7 @@ Dónde queda la traza de cada subagente:
 | `feature_list.json`                      | leader/implementer | `pending` → `spec_ready` → `in_progress` → `done`             |
 | `progress/history.md`                    | leader             | Resumen append-only al cerrar la sesión                       |
 
-Abre `specs/` y `progress/` en tu editor mientras Claude trabaja: cada
+Abre `specs/` y `progress/` en tu editor mientras el agente trabaja: cada
 informe aparece en cuanto el subagente termina. Esa es la regla
 anti-teléfono-descompuesto en acción — el contenido no circula por chat,
 vive en disco y queda versionado.
@@ -98,25 +108,23 @@ vive en disco y queda versionado.
 │   ├── current.md         # Sesión activa (estado vivo)
 │   └── history.md         # Bitácora append-only
 ├── docs/
+│   ├── setup.md           # Protocolo para configurar el template desde cero
 │   ├── architecture.md    # Qué significa "buen trabajo"
 │   ├── conventions.md     # Estilo, nombres, errores
 │   ├── specs.md           # Proceso SDD: EARS, 3 archivos, aprobación humana
 │   └── verification.md    # Cómo demostrar que funciona
-├── .claude/
+├── .opencode/
 │   ├── agents/            # leader, spec_author, implementer, reviewer
-│   └── settings.json      # Hooks que automatizan la verificación
-├── src/
-│   ├── storage.py         # Persistencia atómica (JSON)
-│   ├── notes.py           # Modelo de dominio
-│   └── cli.py             # Interfaz argparse
-└── tests/
-    ├── test_storage.py
-    ├── test_notes.py
-    └── test_cli.py
+│   └── AGENTS.md          # Instrucciones de inicio de sesión
+├── src/                   # Código de la aplicación (vacío en el template)
+└── tests/                 # Tests automáticos (vacío en el template)
 ```
 
-## Aprendizajes que ilustra este proyecto
+## Aprendizajes que ilustra este template
 
+- **Setup automático desde template**: `docs/setup.md` guía al leader para
+  rellenar placeholders, configurar `.gitignore` y crear estructura mínima del
+  stack sin intervención humana en los detalles.
 - **Divulgación progresiva** en `AGENTS.md`: el agente no recibe todas las
   reglas de golpe, recibe un mapa para buscarlas bajo demanda.
 - **Una feature a la vez** validado por `init.sh` (rechaza más de un

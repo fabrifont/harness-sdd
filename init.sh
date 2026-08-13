@@ -54,7 +54,15 @@ python3 - <<'PY'
 import json, os, sys
 try:
     data = json.load(open("feature_list.json"))
+    raw = open("feature_list.json").read()
     valid = {"pending", "spec_ready", "in_progress", "done", "blocked"}
+
+    # Detectar estado de plantilla
+    if "{{" in raw:
+        print(f"[WARN]  feature_list.json contiene placeholders sin rellenar")
+        print(f"[WARN]  El repo está en estado de plantilla. Ejecuta setup antes de features.")
+        # No es un error fatal: init.sh pasa pero advierte
+
     in_progress = [f for f in data["features"] if f["status"] == "in_progress"]
     if len(in_progress) > 1:
         print(f"[FAIL]  Hay {len(in_progress)} features en in_progress (máximo 1)")

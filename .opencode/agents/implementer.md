@@ -1,7 +1,6 @@
 ---
 name: implementer
 description: Trabajador. Implementa UNA feature según su spec aprobado. Escribe código, escribe tests y se autoverifica.
-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
 # Agente Implementador
@@ -58,7 +57,9 @@ Tu respuesta final es **una sola línea**:
 ```
 done -> progress/impl_<name>.md
 ```
+
 o
+
 ```
 blocked -> progress/impl_<name>.md
 ```

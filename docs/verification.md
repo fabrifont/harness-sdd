@@ -14,35 +14,31 @@ Toda función pública en `src/` tiene al menos un test en `tests/` que:
 
 Comando:
 ```bash
-python3 -m unittest discover -s tests -v
+{{TEST_COMMAND}}
 ```
 
-### Nivel 2 — Test de integración del CLI (obligatorio para features de UI)
+### Nivel 2 — Tests de integración (obligatorio para features de UI/API)
 
-Las features que añaden comandos al CLI se verifican ejecutando el CLI real
-contra un archivo temporal:
+Las features que añaden comandos o endpoints se verifican ejecutando la
+interfaz real contra un entorno temporal:
 
 ```python
 import subprocess, tempfile, os
 with tempfile.TemporaryDirectory() as d:
-    env = {**os.environ, "NOTES_FILE": os.path.join(d, "notes.json")}
+    env = {**os.environ, "CONFIG_VAR": os.path.join(d, "config.json")}
     out = subprocess.check_output(
-        ["python3", "-m", "src.cli", "add", "hola", "--body", "mundo"],
+        ["{{ENTRY_POINT}}", "arg1", "arg2"],
         env=env, text=True,
     )
-    assert "id=" in out
+    assert "resultado_esperado" in out
 ```
+
+*(Adapta este ejemplo al tipo de interfaz de tu proyecto.)*
 
 ### Nivel 3 — Smoke test manual (opcional pero recomendado)
 
-Antes de cerrar la sesión, ejecuta un flujo end-to-end con un archivo
-temporal en `/tmp`:
-
-```bash
-NOTES_FILE=/tmp/notes_demo.json python3 -m src.cli add "test" --body "x"
-NOTES_FILE=/tmp/notes_demo.json python3 -m src.cli list
-rm /tmp/notes_demo.json
-```
+Antes de cerrar la sesión, ejecuta un flujo end-to-end con datos temporales
+en `/tmp`.
 
 ### Nivel 4 — Trazabilidad de requirements (obligatorio para features con `"sdd": true`)
 
@@ -53,9 +49,9 @@ El implementer documenta el mapa en `progress/impl_<name>.md`:
 
 ```markdown
 ## Trazabilidad
-- R1 → `test_recent_default_limit`
-- R2 → `test_recent_invalid_limit`
-- R3 → `test_recent_custom_limit`
+- R1 → `test_feature_default_behavior`
+- R2 → `test_feature_invalid_input`
+- R3 → `test_feature_edge_case`
 ```
 
 ## Anti-patrones (no hacer)
@@ -63,7 +59,8 @@ El implementer documenta el mapa en `progress/impl_<name>.md`:
 - ❌ "He añadido el comando, debería funcionar." → falta test ejecutable.
 - ❌ Test que solo verifica que la función no lanza excepción. → tiene que
   comprobar el resultado concreto.
-- ❌ `mock` del filesystem. → usa `tempfile.TemporaryDirectory()` real.
+- ❌ `mock` del filesystem o de la red cuando se puede usar un entorno real. →
+  usa temporales y procesos reales.
 - ❌ Marcar la feature como `done` sin pasar `./init.sh`.
 
 ## Verificación final antes de cerrar

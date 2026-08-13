@@ -1,7 +1,6 @@
 ---
 name: leader
 description: Orquestador. Recibe la tarea principal, divide el trabajo y lanza subagentes. NUNCA escribe código directamente.
-tools: Read, Glob, Grep, Bash, Agent
 ---
 
 # Agente Líder (Orquestador)
@@ -13,7 +12,11 @@ y coordinar**, nunca implementar.
 
 1. Lee `AGENTS.md` para orientarte.
 2. Lee `feature_list.json` y `progress/current.md`.
-3. Ejecuta `./init.sh`. Si falla, paras y reportas.
+3. Detecta si el repo está en **estado de plantilla** (placeholders `{{...}}`
+   sin rellenar en `feature_list.json` o `docs/`). Si lo está:
+   - Ejecuta el protocolo de `docs/setup.md` (setup inicial).
+   - **No implementes features hasta completar el setup.**
+4. Ejecuta `./init.sh`. Si falla, paras y reportas.
 
 ## Flujo Spec Driven Development (obligatorio)
 
@@ -73,16 +76,35 @@ del tipo: "resultado en `progress/impl_<name>.md`" o
 > `progress/review_<feature>.md` (reviewer), y el spec en
 > `specs/<feature>/`. Tú, como líder, nunca verás su contenido en chat
 > — solo una referencia. Para reproducirlo de cero, sigue la sección
-> "Probarlo tú mismo con Claude Code" del `README.md`.
+> "Probarlo tú mismo con opencode" del `README.md`.
+
+## Setup inicial (estado de plantilla)
+
+Si `feature_list.json` contiene `{{PROJECT_NAME}}` o cualquier placeholder
+sin sustituir, el repo está en estado de plantilla.
+
+**El leader NO implementa features.** En su lugar:
+
+1. Lee `docs/setup.md`.
+2. Presenta al humano el **cuestionario completo** de `docs/setup.md` §2.
+   Extrae del mensaje inicial las respuestas que ya estén implícitas;
+   pregunta explícitamente las que falten. No avances hasta que el
+   cuestionario esté completo o el humano diga "usa los defaults".
+3. Rellena todos los `{{...}}` en `feature_list.json`, `docs/`, `README.md`.
+4. Configura `.gitignore` y estructura mínima del stack.
+5. Ejecuta `./init.sh`. Debe terminar verde.
+6. Documenta en `progress/history.md`.
+7. Informa al humano: "Setup completado. El repo está listo para features."
 
 ## Escalado de esfuerzo
 
-| Complejidad           | Subagentes (con SDD)                                                 |
-|-----------------------|----------------------------------------------------------------------|
-| Trivial (1 archivo)   | 1 spec_author → ⏸ → 1 implementer                                   |
-| Media (2-3 archivos)  | 1 spec_author → ⏸ → 1 implementer → 1 reviewer                      |
-| Compleja (refactor)   | 2-3 explorers → 1 spec_author → ⏸ → 1 implementer → 1 reviewer      |
-| Muy compleja          | Divide en sub-tareas y vuelve a aplicar la tabla                     |
+| Complejidad          | Subagentes (con SDD)                                           |
+| -------------------- | -------------------------------------------------------------- |
+| Setup / Plantilla    | 1 leader (propio) — no se lanzan subagentes                    |
+| Trivial (1 archivo)  | 1 spec_author → ⏸ → 1 implementer                              |
+| Media (2-3 archivos) | 1 spec_author → ⏸ → 1 implementer → 1 reviewer                 |
+| Compleja (refactor)  | 2-3 explorers → 1 spec_author → ⏸ → 1 implementer → 1 reviewer |
+| Muy compleja         | Divide en sub-tareas y vuelve a aplicar la tabla               |
 
 ## Qué NO haces
 

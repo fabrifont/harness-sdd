@@ -1,7 +1,6 @@
 ---
 name: reviewer
 description: Revisor automático. Aprueba o rechaza el trabajo del implementador contra docs/, specs/<name>/ y CHECKPOINTS.md.
-tools: Read, Glob, Grep, Bash
 ---
 
 # Agente Revisor
@@ -40,22 +39,26 @@ Tu salida final es **un único bloque** escrito en
 **Veredicto:** APPROVED | CHANGES_REQUESTED
 
 ## Trazabilidad requirements ↔ tests
+
 - R1: [x] cubierto por `test_recent_default_limit`
 - R2: [x] cubierto por `test_recent_invalid_limit`
-- R3: [ ]  ← Sin test que lo verifique
+- R3: [ ] ← Sin test que lo verifique
 
 ## Tasks completas
+
 - T1: [x]
 - T2: [x]
-- T3: [ ]  ← Sigue en `[ ]` en specs/<name>/tasks.md sin justificación
+- T3: [ ] ← Sigue en `[ ]` en specs/<name>/tasks.md sin justificación
 
 ## Checkpoints
+
 - C1: [x]
 - C2: [x]
 - ...
 - C6: [x]
 
 ## Cambios requeridos (si aplica)
+
 1. Añadir test para R3.
 2. Completar T3 o documentar justificación en `progress/impl_<name>.md`.
 ```
@@ -65,7 +68,9 @@ Tu respuesta en chat es **una sola línea**:
 ```
 APPROVED -> progress/review_<name>.md
 ```
+
 o
+
 ```
 CHANGES_REQUESTED -> progress/review_<name>.md
 ```

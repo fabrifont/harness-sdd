@@ -3,23 +3,23 @@
 > Homogeneidad extrema. La IA predice mejor cuando el repositorio se parece
 > a sí mismo en todas partes.
 
-## Estilo Python
+## Estilo
 
-- **Versión:** Python 3.9+ (sintaxis `list[str]` permitida).
-- **Formato:** PEP 8. Líneas máximo 100 caracteres.
+- **Lenguaje:** {{LANGUAGE}} ({{VERSION}}).
+- **Formato:** {{STYLE_GUIDE}}. Líneas máximo 100 caracteres.
 - **Imports:** stdlib primero, luego locales. Una línea por módulo.
 - **Strings:** comillas dobles `"..."` siempre. Comillas simples solo
   para escapar comillas dobles dentro.
-- **f-strings** para interpolación. Nada de `.format()` ni `%`.
+- **Interpolación:** {{INTERPOLATION}} preferida. Nada de concatenación manual.
 
 ## Nombres
 
 | Tipo                    | Convención        | Ejemplo               |
 |-------------------------|-------------------|-----------------------|
-| Módulos                 | `snake_case`      | `notes.py`            |
-| Clases                  | `PascalCase`      | `Note`                |
-| Funciones / variables   | `snake_case`      | `load_notes`          |
-| Constantes              | `UPPER_SNAKE`     | `DEFAULT_NOTES_PATH`  |
+| Módulos                 | `snake_case`      | `storage.py`          |
+| Clases                  | `PascalCase`      | `User`                |
+| Funciones / variables   | `snake_case`      | `load_users`          |
+| Constantes              | `UPPER_SNAKE`     | `DEFAULT_PATH`        |
 | Privadas                | prefijo `_`       | `_atomic_write`       |
 
 ## Estructura de archivo
@@ -35,30 +35,32 @@ import json
 import os
 
 # imports locales
-from src.notes import Note
+from src.models import User
 ```
+
+*(Adapta esta plantilla al lenguaje de tu proyecto.)*
 
 ## Tests
 
 - Un archivo de test por módulo: `tests/test_<módulo>.py`.
 - Una clase `Test<Cosa>(unittest.TestCase)` por unidad lógica.
-- Cada test usa un `tempfile.TemporaryDirectory()` y limpia tras de sí.
+- Cada test usa entornos temporales reales y limpia tras de sí.
 - Nombres de test descriptivos: `test_load_returns_empty_when_file_missing`.
 
 ## Manejo de errores
 
-Excepciones del dominio en `src/notes.py`:
+Define excepciones del dominio en un módulo central:
 
 ```python
-class NoteError(Exception):
+class DomainError(Exception):
     """Base para errores del dominio."""
 
-class NoteNotFound(NoteError):
-    """Se lanza cuando se busca una nota inexistente."""
+class NotFoundError(DomainError):
+    """Se lanza cuando se busca un recurso inexistente."""
 ```
 
-El CLI captura excepciones del dominio, imprime mensaje a `stderr` y sale
-con código 1. Nunca propaga stack traces al usuario.
+La interfaz (CLI/API) captura excepciones del dominio, imprime mensaje a
+`stderr` y sale con código de error. Nunca propaga stack traces al usuario.
 
 ## Comentarios
 
